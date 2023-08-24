@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: veguinha
+spec:
+  replicas: 10  # Número de réplicas (pods) para escalabilidade
+  selector:
+    matchLabels:
+      app: veguinha
+  template:
+    metadata:
+      labels:
+        app: veguinha
+    spec:
+      containers:
+        - name: veguinha
+          image: gcr.io/drexai/veguinha-ui
+          ports:
+            - containerPort: 3000  # A porta do seu aplicativo
