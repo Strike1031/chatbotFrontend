@@ -20,7 +20,7 @@ export function Chat() {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<any[]>([]);
     const messageEndRef = useRef<HTMLDivElement>(null);
-    const userId = getRandomInt(1, 1000000);
+    const [userId, setUserId] =  useState(0);
     const handleInput = async () => {
         setInput('');
 
@@ -44,9 +44,9 @@ export function Chat() {
             if(!response.ok) {
                 throw new Error(`request failed with status ${response.status}`)
             }
-            const data = await response.json();
-
-            const newResponse = { sender: 'Groot:', content: data.bot_response, style: 'flex gap-2 text-slate-600 text-sm mt-8', avatar: 'https://media.licdn.com/dms/image/C4E0BAQGyYeVLJFb-IA/company-logo_200_200/0/1641913708341?e=1700092800&v=beta&t=R3cAjt11_Y54RLcZSHnSthEtfB33EXlAT2hy3zXArvU' };
+            let data = await response.json();
+            let newContent =  data.bot_response.replace("Could not parse LLM output:","");
+            const newResponse = { sender: 'Groot:', content: newContent, style: 'flex gap-2 text-slate-600 text-sm mt-8', avatar: 'https://media.licdn.com/dms/image/C4E0BAQGyYeVLJFb-IA/company-logo_200_200/0/1641913708341?e=1700092800&v=beta&t=R3cAjt11_Y54RLcZSHnSthEtfB33EXlAT2hy3zXArvU' };
             setMessages([...messages, newMessage, newResponse]);
         }catch (error: any) {
             if (error instanceof Error) {
@@ -65,7 +65,10 @@ export function Chat() {
             handleInput()
         }
     }
-
+    useEffect(() => {
+        setUserId(getRandomInt(1, 1000000));
+    },[])
+    
     useEffect(() => {
         messageEndRef.current?.scrollIntoView();
     }, [messages]);
